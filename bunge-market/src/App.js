@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import {
   CssBaseline,
   AppBar,
@@ -12,7 +12,12 @@ import {
   InputBase,
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
+
+// 📄 페이지 임포트
 import MainPage from './pages/MainPage';
+import DetailPage from './pages/DetailPage'; // 팀원 페이지
+import AddPage from './pages/AddPage';       // 팀원 페이지
+import EditPage from './pages/EditPage';     // 팀원 페이지
 import CreateProductPage from './pages/CreateProductPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import EditProductPage from './pages/EditProductPage';
@@ -21,7 +26,7 @@ export default function App() {
   const [q, setQ] = useState('');
 
   return (
-    <BrowserRouter>
+    <Router>
       <CssBaseline />
 
       {/* 🔹 상단 네비게이션 */}
@@ -44,8 +49,7 @@ export default function App() {
             px: { xs: 2, md: 3 },
           }}
         >
-          {/* 왼쪽 로고/타이틀 */}
-          {/* 왼쪽: 로고 + 텍스트 */}
+          {/* 왼쪽: 로고 */}
           <Stack
             direction="row"
             alignItems="center"
@@ -57,33 +61,21 @@ export default function App() {
               color: 'inherit',
             }}
           >
-            {/* 로고 이미지 */}
             <Box
               component="img"
-              src="/images/lightning-logo.png" // ⚡ 여기에 로고 이미지 경로
+              src="/images/lightning-logo.png"
               alt="로고"
               sx={{ width: 36, height: 36 }}
             />
-
-            {/* 텍스트 두 줄 */}
             <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                sx={{ color: '#111', fontSize: 16 }}
-              >
+              <Typography variant="subtitle1" fontWeight={700} sx={{ color: '#111', fontSize: 16 }}>
                 라이트닝
               </Typography>
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                sx={{ color: '#111', fontSize: 16 }}
-              >
+              <Typography variant="subtitle1" fontWeight={700} sx={{ color: '#111', fontSize: 16 }}>
                 캠퍼스스토어
               </Typography>
             </Box>
           </Stack>
-
 
           {/* 가운데 검색창 */}
           <Box
@@ -134,7 +126,7 @@ export default function App() {
         </Toolbar>
       </AppBar>
 
-      {/* 🔹 본문 영역 */}
+      {/* 🔹 본문 */}
       <Container
         maxWidth="lg"
         sx={{
@@ -148,13 +140,19 @@ export default function App() {
       >
         <Box sx={{ width: '100%', maxWidth: 1200 }}>
           <Routes>
+            {/* 기존 페이지 */}
             <Route path="/" element={<MainPage searchQuery={q} />} />
             <Route path="/create" element={<CreateProductPage />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/edit/:id" element={<EditProductPage />} />
+
+            {/* 팀원 페이지 */}
+            <Route path="/detail/:id" element={<DetailPage />} />
+            <Route path="/add" element={<AddPage />} />
+            <Route path="/editpage/:id" element={<EditPage />} />
           </Routes>
         </Box>
       </Container>
-    </BrowserRouter>
+    </Router>
   );
 }

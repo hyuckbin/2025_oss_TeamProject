@@ -1,16 +1,32 @@
-export const CATEGORIES = [
-'디지털', '의류', '도서', '생활', '스포츠', '기타'
-];
+// src/constants/index.js
 
+export const CATEGORIES = [
+  '노트북',
+  '태블릿',
+  '스마트폰',
+  '액세서리'
+];
 
 export const MAJORS = [
-'컴퓨터공학', '전기전자', '기계', '산공', '수학', '물리', '기타'
+  '공학',
+  '디자인',
+  '경영',
+  '인문',
+  '자연과학',
+  '예체능',
+  '의학',
+  '사회과학'
 ];
 
+export const CONDITIONS = [
+  { value: 'S급', label: 'S급 - 거의 새것', color: '#4caf50' },
+  { value: 'A급', label: 'A급 - 미세한 사용감', color: '#2196f3' },
+  { value: 'B급', label: 'B급 - 사용감 있음', color: '#ff9800' },
+  { value: 'C급', label: 'C급 - 눈에 띄는 사용감', color: '#f44336' }
+];
 
-// 상태 등급(검수 결과) — 정렬용 가중치
-export const GRADES = ['S', 'A', 'B', 'C'];
-export const GRADE_ORDER = GRADES.reduce((acc, g, i) => { acc[g] = i; return acc; }, {});
-
-
-export const STATUS = ['판매중', '예약중', '판매완료'];
+export const STATUSES = [
+  '판매중',
+  '예약중',
+  '거래완료'
+];
