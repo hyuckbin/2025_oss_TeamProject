@@ -16,59 +16,73 @@ import {
   Alert,
   Chip
 } from '@mui/material';
+
 import { createProduct } from '../services/api';
 import { CATEGORIES, MAJORS, CONDITIONS } from '../constants';
+// Header가 프로젝트 전역 AppBar와 중복되면 제거해도 됩니다.
 import Header from '../components/Header';
 
 function AddPage() {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm({
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm({
     defaultValues: {
+      title: '',
+      description: '',
+      price: '',
+      category: '',
+      major: '',
+      location: '',
+      modelName: '',
+      imageUrl: '',
+      // 프로젝트 공통 필드
       studentVerified: true,
       status: '판매중',
       priceHistory: [],
-      condition: ''
-    }
+      condition: '',
+    },
   });
 
   const [imagePreview, setImagePreview] = useState(null);
-  const [imageFile, setImageFile] = useState(null);  // 파일 저장
+  const [imageFile, setImageFile] = useState(null);
   const [inspectionResult, setInspectionResult] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const selectedCategory = watch('category');
   const selectedCondition = watch('condition');
 
-  // 이미지 파일 업로드 핸들러
+  // 이미지 파일 업로드
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // 파일 크기 체크 (10MB 제한)
-      if (file.size > 10 * 1024 * 1024) {
-        alert('이미지 크기는 10MB 이하로 업로드해주세요.');
-        return;
-      }
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      // 이미지 파일만 허용
-      if (!file.type.startsWith('image/')) {
-        alert('이미지 파일만 업로드 가능합니다.');
-        return;
-      }
-
-      setImageFile(file);
-
-      // 미리보기 생성
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        // URL 형식으로 저장 (실제로는 Base64)
-        setValue('imageUrl', reader.result);
-      };
-      reader.readAsDataURL(file);
+    // 10MB 제한
+    if (file.size > 10 * 1024 * 1024) {
+      alert('이미지 크기는 10MB 이하로 업로드해주세요.');
+      return;
     }
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    setImageFile(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+      setValue('imageUrl', String(reader.result)); // Base64 저장
+    };
+    reader.readAsDataURL(file);
   };
 
-  // 이미지 삭제
+  // 이미지 제거
   const handleImageRemove = () => {
     setImageFile(null);
     setImagePreview(null);
@@ -76,23 +90,24 @@ function AddPage() {
     setInspectionResult(null);
   };
 
-  // Mock 자체 검수 시스템
+  // Mock 자체 검수
   const handleImageInspection = () => {
     if (!imagePreview) {
       alert('이미지를 먼저 업로드해주세요!');
       return;
     }
 
-    const randomCondition = CONDITIONS[Math.floor(Math.random() * CONDITIONS.length)];
-    const basePrice = Math.floor(Math.random() * 1000000) + 500000;
+    // CONDITIONS = [{ value, label, color }, ...] 가정
+    const random = CONDITIONS[Math.floor(Math.random() * CONDITIONS.length)];
+    const basePrice = Math.floor(Math.random() * 1_000_000) + 500_000;
 
     setInspectionResult({
-      condition: randomCondition.value,
+      condition: random.value,
       estimatedPrice: basePrice,
-      color: randomCondition.color
+      color: random.color,
     });
 
-    setValue('condition', randomCondition.value);
+    setValue('condition', random.value);
   };
 
   const onSubmit = async (data) => {
@@ -102,20 +117,20 @@ function AddPage() {
     }
 
     setIsSubmitting(true);
-
     try {
       const productData = {
         ...data,
-        price: Number(data.price),
-        priceHistory: [Number(data.price)],
-        createdAt: new Date().toISOString()
+        price: Number(data.price) || 0,
+        priceHistory: [Number(data.price) || 0],
+        // 🔥 프로젝트 전체 형식에 맞춰 UNIX seconds 로 저장
+        createdAt: Math.floor(Date.now() / 1000),
       };
 
       await createProduct(productData);
       alert('상품이 등록되었습니다!');
       navigate('/');
-    } catch (error) {
-      console.error('상품 등록 실패:', error);
+    } catch (err) {
+      console.error('상품 등록 실패:', err);
       alert('상품 등록에 실패했습니다.');
     } finally {
       setIsSubmitting(false);
@@ -124,6 +139,7 @@ function AddPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8f9fa' }}>
+      {/* 전역 AppBar를 쓰고 있다면 <Header />는 제거해도 됩니다 */}
       <Header />
 
       <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
@@ -133,19 +149,19 @@ function AddPage() {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Paper elevation={0} sx={{ p: 3, mb: 2 }}>
-            {/* 이미지 영역 */}
             <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
               상품이미지 (0/12) <span style={{ color: '#f44336' }}>*</span>
             </Typography>
 
-            {/* 이미지 업로드 박스 */}
-            <Box sx={{
-              border: '2px solid #e0e0e0',
-              borderRadius: 2,
-              overflow: 'hidden',
-              mb: 2,
-              bgcolor: '#fafafa'
-            }}>
+            <Box
+              sx={{
+                border: '2px solid #e0e0e0',
+                borderRadius: 2,
+                overflow: 'hidden',
+                mb: 2,
+                bgcolor: '#fafafa',
+              }}
+            >
               {imagePreview ? (
                 <Box sx={{ position: 'relative' }}>
                   <img
@@ -155,7 +171,7 @@ function AddPage() {
                       width: '100%',
                       maxHeight: '400px',
                       objectFit: 'contain',
-                      display: 'block'
+                      display: 'block',
                     }}
                   />
                   <Button
@@ -163,11 +179,7 @@ function AddPage() {
                     color="error"
                     size="small"
                     onClick={handleImageRemove}
-                    sx={{
-                      position: 'absolute',
-                      top: 10,
-                      right: 10
-                    }}
+                    sx={{ position: 'absolute', top: 10, right: 10 }}
                   >
                     삭제
                   </Button>
@@ -182,17 +194,10 @@ function AddPage() {
                     justifyContent: 'center',
                     minHeight: '300px',
                     cursor: 'pointer',
-                    '&:hover': {
-                      bgcolor: '#f0f0f0'
-                    }
+                    '&:hover': { bgcolor: '#f0f0f0' },
                   }}
                 >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={handleImageUpload}
-                  />
+                  <input type="file" accept="image/*" hidden onChange={handleImageUpload} />
                   <Box
                     sx={{
                       width: 80,
@@ -202,7 +207,7 @@ function AddPage() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      mb: 2
+                      mb: 2,
                     }}
                   >
                     <Typography sx={{ fontSize: '40px' }}>📷</Typography>
@@ -218,17 +223,13 @@ function AddPage() {
             </Box>
 
             {/* Hidden input for react-hook-form */}
-            <input
-              type="hidden"
-              {...register('imageUrl', { required: '이미지를 업로드해주세요' })}
-            />
+            <input type="hidden" {...register('imageUrl', { required: '이미지를 업로드해주세요' })} />
             {errors.imageUrl && (
               <Typography variant="caption" color="error" display="block" sx={{ mb: 2 }}>
                 {errors.imageUrl.message}
               </Typography>
             )}
 
-            {/* AI 검수 버튼 */}
             <Button
               variant="outlined"
               onClick={handleImageInspection}
@@ -237,20 +238,13 @@ function AddPage() {
               sx={{
                 borderColor: '#4FC3F7',
                 color: '#4FC3F7',
-                '&:hover': {
-                  borderColor: '#29B6F6',
-                  bgcolor: '#E1F5FE'
-                },
-                '&:disabled': {
-                  borderColor: '#e0e0e0',
-                  color: '#9e9e9e'
-                }
+                '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' },
+                '&:disabled': { borderColor: '#e0e0e0', color: '#9e9e9e' },
               }}
             >
               🤖 AI 자체 검수 시작
             </Button>
 
-            {/* 검수 결과 */}
             {inspectionResult && (
               <Alert severity="success" sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
@@ -259,11 +253,7 @@ function AddPage() {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1 }}>
                   <Chip
                     label={inspectionResult.condition}
-                    sx={{
-                      bgcolor: inspectionResult.color,
-                      color: 'white',
-                      fontWeight: 'bold'
-                    }}
+                    sx={{ bgcolor: inspectionResult.color, color: 'white', fontWeight: 'bold' }}
                   />
                   <Typography variant="body2">
                     예상 시세: <strong>{inspectionResult.estimatedPrice.toLocaleString()}원</strong>
@@ -275,7 +265,6 @@ function AddPage() {
 
           <Divider sx={{ my: 3 }} />
 
-          {/* 나머지 폼 필드들은 그대로 유지 */}
           {/* 카테고리 */}
           <Paper elevation={0} sx={{ p: 3, mb: 2 }}>
             <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
@@ -294,7 +283,9 @@ function AddPage() {
               </RadioGroup>
             </FormControl>
             {errors.category && (
-              <Typography variant="caption" color="error">카테고리를 선택해주세요</Typography>
+              <Typography variant="caption" color="error">
+                카테고리를 선택해주세요
+              </Typography>
             )}
           </Paper>
 
@@ -316,11 +307,13 @@ function AddPage() {
               </RadioGroup>
             </FormControl>
             {errors.major && (
-              <Typography variant="caption" color="error">전공을 선택해주세요</Typography>
+              <Typography variant="caption" color="error">
+                전공을 선택해주세요
+              </Typography>
             )}
           </Paper>
 
-          {/* 상품상태 (검수 안 했을 경우만) */}
+          {/* 상품상태 (검수 안 했을 경우만 노출) */}
           {!inspectionResult && (
             <Paper elevation={0} sx={{ p: 3, mb: 2 }}>
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
@@ -332,14 +325,18 @@ function AddPage() {
                     <FormControlLabel
                       key={cond.value}
                       value={cond.value}
-                      control={<Radio {...register('condition', { required: !inspectionResult })} />}
+                      control={
+                        <Radio {...register('condition', { required: !inspectionResult })} />
+                      }
                       label={cond.label}
                     />
                   ))}
                 </RadioGroup>
               </FormControl>
               {errors.condition && (
-                <Typography variant="caption" color="error">상품 상태를 선택해주세요</Typography>
+                <Typography variant="caption" color="error">
+                  상품 상태를 선택해주세요
+                </Typography>
               )}
             </Paper>
           )}
@@ -363,7 +360,7 @@ function AddPage() {
             <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
               모델명 <span style={{ color: '#f44336' }}>*</span>
             </Typography>
-            <TextField 
+            <TextField
               fullWidth
               placeholder="예: MacBook Pro 14 M1"
               {...register('modelName', { required: '모델명을 입력해주세요' })}
@@ -397,12 +394,10 @@ function AddPage() {
               fullWidth
               type="number"
               placeholder="가격을 입력해주세요"
-              InputProps={{
-                endAdornment: <Typography>원</Typography>
-              }}
+              InputProps={{ endAdornment: <Typography>원</Typography> }}
               {...register('price', {
                 required: '가격을 입력해주세요',
-                min: { value: 0, message: '0원 이상 입력해주세요' }
+                min: { value: 0, message: '0원 이상 입력해주세요' },
               })}
               error={!!errors.price}
               helperText={errors.price?.message}
@@ -423,26 +418,28 @@ function AddPage() {
             />
           </Paper>
 
-
-
           {/* 하단 고정 버튼 */}
-          <Box sx={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            bgcolor: 'white',
-            borderTop: '1px solid #e0e0e0',
-            p: 2,
-            zIndex: 1000
-          }}>
-            <Box sx={{
-              maxWidth: 800,
-              mx: 'auto',
-              display: 'flex',
-              gap: 1,
-              justifyContent: 'flex-end'  // 오른쪽 정렬
-            }}>
+          <Box
+            sx={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              bgcolor: 'white',
+              borderTop: '1px solid #e0e0e0',
+              p: 2,
+              zIndex: 1000,
+            }}
+          >
+            <Box
+              sx={{
+                maxWidth: 800,
+                mx: 'auto',
+                display: 'flex',
+                gap: 1,
+                justifyContent: 'flex-end',
+              }}
+            >
               <Button
                 variant="outlined"
                 onClick={() => navigate('/')}
@@ -452,7 +449,7 @@ function AddPage() {
                   height: '48px',
                   fontSize: '16px',
                   borderColor: '#e0e0e0',
-                  color: '#666'
+                  color: '#666',
                 }}
               >
                 취소
@@ -466,10 +463,7 @@ function AddPage() {
                   fontSize: '16px',
                   borderColor: '#4FC3F7',
                   color: '#4FC3F7',
-                  '&:hover': {
-                    borderColor: '#29B6F6',
-                    bgcolor: '#E1F5FE'
-                  }
+                  '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' },
                 }}
               >
                 임시저장
@@ -483,16 +477,13 @@ function AddPage() {
                   height: '48px',
                   fontSize: '16px',
                   bgcolor: '#4FC3F7',
-                  '&:hover': {
-                    bgcolor: '#29B6F6'
-                  }
+                  '&:hover': { bgcolor: '#29B6F6' },
                 }}
               >
                 {isSubmitting ? '등록 중...' : '등록하기'}
               </Button>
             </Box>
           </Box>
-
 
           {/* 하단 버튼 공간 확보 */}
           <Box sx={{ height: '80px' }} />

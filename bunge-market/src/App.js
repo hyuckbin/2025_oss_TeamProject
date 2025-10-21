@@ -13,14 +13,11 @@ import {
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 
-// 📄 페이지 임포트
+// 📄 페이지 임포트 (팀 버전 기준)
 import MainPage from './pages/MainPage';
-import DetailPage from './pages/DetailPage'; // 팀원 페이지
-import AddPage from './pages/AddPage';       // 팀원 페이지
-import EditPage from './pages/EditPage';     // 팀원 페이지
-import CreateProductPage from './pages/CreateProductPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import EditProductPage from './pages/EditProductPage';
+import DetailPage from './pages/DetailPage';
+import AddPage from './pages/AddPage';
+import EditPage from './pages/EditPage';
 
 export default function App() {
   const [q, setQ] = useState('');
@@ -109,7 +106,7 @@ export default function App() {
             </Button>
             <Button
               component={Link}
-              to="/create"
+              to="/add"
               variant="contained"
               sx={{
                 bgcolor: '#5c6bc0',
@@ -140,16 +137,10 @@ export default function App() {
       >
         <Box sx={{ width: '100%', maxWidth: 1200 }}>
           <Routes>
-            {/* 기존 페이지 */}
             <Route path="/" element={<MainPage searchQuery={q} />} />
-            <Route path="/create" element={<CreateProductPage />} />
-            <Route path="/product/:id" element={<ProductDetailPage />} />
-            <Route path="/edit/:id" element={<EditProductPage />} />
-
-            {/* 팀원 페이지 */}
-            <Route path="/detail/:id" element={<DetailPage />} />
+            <Route path="/product/:id" element={<DetailPage />} />
             <Route path="/add" element={<AddPage />} />
-            <Route path="/editpage/:id" element={<EditPage />} />
+            <Route path="/edit/:id" element={<EditPage />} />
           </Routes>
         </Box>
       </Container>

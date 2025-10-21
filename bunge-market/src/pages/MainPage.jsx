@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { listProducts } from '../services/api';
-import { MAJORS, GRADE_ORDER } from '../constants';
+import { getbunge } from '../services/api';
+import { MAJORS } from '../constants';
 import { Box } from '@mui/material';
 
 import {
@@ -22,7 +22,7 @@ export default function MainPage() {
     (async () => {
       setLoading(true);
       try {
-        const data = await listProducts();
+        const data = await getbunge();
         setItems(data);
       } finally { setLoading(false); }
     })();
@@ -36,7 +36,6 @@ export default function MainPage() {
     const arr = [...base];
     if (sort === 'priceAsc') arr.sort((a, b) => (a.price || 0) - (b.price || 0));
     else if (sort === 'priceDesc') arr.sort((a, b) => (b.price || 0) - (a.price || 0));
-    else if (sort === 'grade') arr.sort((a, b) => (GRADE_ORDER[a.grade] ?? 99) - (GRADE_ORDER[b.grade] ?? 99));
     else arr.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     return arr;
   }, [items, q, sort, majSel]);
