@@ -1,22 +1,160 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import MainPage from "./pages/MainPage";
-import AddPage from "./pages/AddPage";
-import DetailPage from "./pages/DetailPage";
-import EditPage from "./pages/EditPage";
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { useState } from 'react';
+import {
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Stack,
+  Container,
+  Box,
+  InputBase,
+} from '@mui/material';
+import { Search } from '@mui/icons-material';
+import MainPage from './pages/MainPage';
+import CreateProductPage from './pages/CreateProductPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import EditProductPage from './pages/EditProductPage';
 
-function App() {
+export default function App() {
+  const [q, setQ] = useState('');
+
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/add" element={<AddPage />} />
-        <Route path="/detail/:id" element={<DetailPage />} />
-        <Route path="/edit/:id" element={<EditPage />} />
-      </Routes>
-    </Router>
+    <BrowserRouter>
+      <CssBaseline />
+
+      {/* 🔹 상단 네비게이션 */}
+      <AppBar
+        position="sticky"
+        elevation={0}
+        sx={{
+          bgcolor: '#fff',
+          color: '#111',
+          borderBottom: '1px solid #e5e5e5',
+        }}
+      >
+        <Toolbar
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            maxWidth: 1200,
+            mx: 'auto',
+            width: '100%',
+            px: { xs: 2, md: 3 },
+          }}
+        >
+          {/* 왼쪽 로고/타이틀 */}
+          {/* 왼쪽: 로고 + 텍스트 */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            component={Link}
+            to="/"
+            sx={{
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
+          >
+            {/* 로고 이미지 */}
+            <Box
+              component="img"
+              src="/images/lightning-logo.png" // ⚡ 여기에 로고 이미지 경로
+              alt="로고"
+              sx={{ width: 36, height: 36 }}
+            />
+
+            {/* 텍스트 두 줄 */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+              <Typography
+                variant="subtitle1"
+                fontWeight={700}
+                sx={{ color: '#111', fontSize: 16 }}
+              >
+                라이트닝
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                fontWeight={700}
+                sx={{ color: '#111', fontSize: 16 }}
+              >
+                캠퍼스스토어
+              </Typography>
+            </Box>
+          </Stack>
+
+
+          {/* 가운데 검색창 */}
+          <Box
+            sx={{
+              flex: 1,
+              maxWidth: 500,
+              mx: 3,
+              display: 'flex',
+              alignItems: 'center',
+              border: '1px solid #ccc',
+              borderRadius: 1,
+              px: 1.5,
+              py: 0.3,
+              bgcolor: '#fff',
+              '&:focus-within': { borderColor: '#1976d2' },
+            }}
+          >
+            <Search sx={{ color: '#888', fontSize: 22, mr: 1 }} />
+            <InputBase
+              placeholder="맥북에어 M2 등 검색어를 입력하세요"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              sx={{ flex: 1, fontSize: 14 }}
+            />
+          </Box>
+
+          {/* 오른쪽 메뉴 */}
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Button color="inherit" sx={{ fontSize: 14, color: '#333' }}>
+              내상점
+            </Button>
+            <Button
+              component={Link}
+              to="/create"
+              variant="contained"
+              sx={{
+                bgcolor: '#5c6bc0',
+                color: '#fff',
+                fontWeight: 600,
+                px: 2.5,
+                borderRadius: 1,
+                '&:hover': { bgcolor: '#3f4fa0' },
+              }}
+            >
+              판매하기
+            </Button>
+          </Stack>
+        </Toolbar>
+      </AppBar>
+
+      {/* 🔹 본문 영역 */}
+      <Container
+        maxWidth="lg"
+        sx={{
+          py: 4,
+          bgcolor: '#f8f8f8',
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          px: { xs: 2, md: 4 },
+        }}
+      >
+        <Box sx={{ width: '100%', maxWidth: 1200 }}>
+          <Routes>
+            <Route path="/" element={<MainPage searchQuery={q} />} />
+            <Route path="/create" element={<CreateProductPage />} />
+            <Route path="/product/:id" element={<ProductDetailPage />} />
+            <Route path="/edit/:id" element={<EditProductPage />} />
+          </Routes>
+        </Box>
+      </Container>
+    </BrowserRouter>
   );
 }
-
-export default App;
