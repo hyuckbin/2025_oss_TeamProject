@@ -363,7 +363,7 @@ function AddPage() {
             <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
               모델명 <span style={{ color: '#f44336' }}>*</span>
             </Typography>
-            <TextField
+            <TextField 
               fullWidth
               placeholder="예: MacBook Pro 14 M1"
               {...register('modelName', { required: '모델명을 입력해주세요' })}
