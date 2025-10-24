@@ -231,15 +231,17 @@ function DetailPage() {
               </Button>
               {/* 번개톡 버튼 (스타일 수정) */}
               <Button
-                variant="contained"
+                variant="outlined" // [수정]
                 startIcon={<ChatIcon />}
                 sx={{
-                  flex: 1, // 비율 차지
+                  flex: 1, 
                   height: '56px',
-                  bgcolor: '#ffae00', // 번개장터 오렌지
+                  // bgcolor 삭제
+                  color: '#4FC3F7', // [추가]
+                  borderColor: '#4FC3F7', // [추가]
                   fontSize: '1rem',
                   fontWeight: 'bold',
-                  '&:hover': { bgcolor: '#e69a00' }
+                  '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' } // [수정]
                 }}
               >
                 번개톡
@@ -248,12 +250,12 @@ function DetailPage() {
               <Button
                 variant="contained"
                 sx={{
-                  flex: 1, // 비율 차지
+                  flex: 1, 
                   height: '56px',
-                  bgcolor: '#f70000', // 번개장터 빨강
+                  bgcolor: '#4FC3F7', // [수정]
                   fontSize: '1rem',
                   fontWeight: 'bold',
-                  '&:hover': { bgcolor: '#d60000' }
+                  '&:hover': { bgcolor: '#29B6F6' } // [수정]
                 }}
               >
                 바로구매
@@ -321,8 +323,31 @@ function DetailPage() {
 
         {/* 수정/삭제 버튼 */}
         <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'center' }}>
-          <Button size="small" variant="outlined" onClick={() => navigate(`/edit/${id}`)} sx={{ color: '#666', borderColor: '#e0e0e0' }}>수정</Button>
-          <Button size="small" variant="outlined" onClick={() => setDeleteDialogOpen(true)} sx={{ color: '#f44336', borderColor: '#f44336' }}>삭제</Button>
+          {/* [수정] '수정' 버튼 -> '번개톡' 스타일 적용 */}
+          <Button 
+            size="small" 
+            variant="outlined" 
+            onClick={() => navigate(`/edit/${id}`)} 
+            sx={{ 
+              color: '#4FC3F7', 
+              borderColor: '#4FC3F7',
+              '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' }
+            }}
+          >
+            수정
+          </Button>
+          {/* [수정] '삭제' 버튼 -> '바로구매' 스타일 적용 */}
+          <Button 
+            size="small" 
+            variant="contained" // [수정] variant 변경
+            onClick={() => setDeleteDialogOpen(true)} 
+            sx={{ 
+              bgcolor: '#4FC3F7',
+              '&:hover': { bgcolor: '#29B6F6' }
+            }}
+          >
+            삭제
+          </Button>
         </Box>
 
       </Box> {/* End of maxWidth: 800px Box */}
