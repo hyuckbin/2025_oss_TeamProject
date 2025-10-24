@@ -27,7 +27,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { getProduct, deleteProduct } from '../services/api';
 import { CONDITIONS } from '../constants';
 import Header from '../components/Header';
-import ProductMap from '../components/ProductMap'; // 👈 [수정] 지도 컴포넌트 임포트
+import ProductMap from '../components/ProductMap';
+import PriceChart from '../components/PriceChart'; // 👈 1. PriceChart 컴포넌트 임포트
 
 function DetailPage() {
   const { id } = useParams();
@@ -37,6 +38,7 @@ function DetailPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
+  // ... (useEffect, handleDelete, handleFavoriteToggle 함수 등은 모두 동일) ...
   // 상품 데이터 불러오기
   useEffect(() => {
     const fetchProduct = async () => {
@@ -71,6 +73,7 @@ function DetailPage() {
   const handleFavoriteToggle = () => {
     setIsFavorite(!isFavorite);
   };
+
 
   // 로딩 중
   if (loading) {
@@ -107,17 +110,26 @@ function DetailPage() {
   const favoriteCount = 1;
   const timeAgo = '55분 전';
 
-  return (
-    // [수정] 배경색은 UI 확인용이었던 것 같아 주석 처리했습니다.
-    <Box sx={{ minHeight: '10vh' /*, bgcolor: '#cd7676ff'*/ }}>
-      <Header />
+  // --- 👇 2. 차트 데이터를 가공 ---
+  // product.priceHistory가 [10000, 9500, 9800] 와 같은 배열이라고 가정
+  const priceHistoryData = product.priceHistory || [];
+  const priceLabels = priceHistoryData.map((_, index) => {
+    if (index === 0) return '등록 시';
+    return `${index}회 변경`;
+  });
+  const priceData = priceHistoryData;
+  // --- (가공 끝) ---
 
-      {/* Container 대신 Box를 사용하고 직접 스타일링 */}
+
+  return (
+    <Box sx={{ minHeight: '10vh' }}>
+      <Header />
       <Box sx={{ maxWidth: '1200px', margin: '0 auto', padding: { xs: 2, md: 4 } }}>
         <Grid container spacing={4}>
           
-          {/* 파란 박스 (이미지) */}
+          {/* 왼쪽 이미지 Grid item (이전과 동일) */}
           <Grid item xs={12} md={7}>
+            {/* ... (이미지 UI) ... */}
             <Box sx={{ position: 'relative' }}>
               <Box sx={{
                 position: 'relative',
@@ -142,7 +154,6 @@ function DetailPage() {
                     e.target.src = 'https://via.placeholder.com/600x600?text=No+Image';
                   }}
                 />
-                {/* (이미지 네비게이션 버튼 등은 그대로) */}
                 <IconButton
                   sx={{
                     position: 'absolute',
@@ -216,10 +227,10 @@ function DetailPage() {
             </Box>
           </Grid>
 
-          {/* 빨간 박스 (상품 정보) */}
+          {/* 오른쪽 상품 정보 Grid item */}
           <Grid item xs={12} md={5}>
             <Box>
-              {/* (상품 제목, 가격, 찜하기 등등... 그대로) */}
+              {/* ... (제목, 가격, 통계 등은 동일) ... */}
               <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
                 {product.title}
               </Typography>
@@ -270,9 +281,11 @@ function DetailPage() {
                   신고하기
                 </Button>
               </Box>
+              
               <Divider sx={{ my: 3 }} />
+
+              {/* ... (상품 정보 테이블은 동일) ... */}
               <Box sx={{ mb: 4 }}>
-                {/* (상품상태, 램 용량 등등... 그대로) */}
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
                   <Typography
                     variant="body1"
@@ -346,16 +359,27 @@ function DetailPage() {
                 </Box>
               </Box>
 
-              {/* 👇 [수정] 지도 컴포넌트 추가 */}
+              {/* 지도 컴포넌트 (이전과 동일) */}
               {product.location && (
                 <Box sx={{ my: 3 }}>
                   <ProductMap locationName={product.location} />
                 </Box>
               )}
 
+              {/* --- 👇 3. 차트 컴포넌트 JSX 추가 --- */}
+              {priceData.length > 0 && (
+                <Box sx={{ my: 3 }}>
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    최근 시세
+                  </Typography>
+                  <PriceChart labels={priceLabels} prices={priceData} />
+                </Box>
+              )}
+              {/* --- (차트 추가 끝) --- */}
+
               <Divider sx={{ my: 3 }} />
 
-              {/* (번개톡, 바로구매 버튼 등등... 그대로) */}
+              {/* ... (버튼 및 수정/삭제 링크 등은 동일) ... */}
               <Box sx={{ display: 'flex', gap: 1.5 }}>
                 <Button
                   variant="outlined"
@@ -460,7 +484,7 @@ function DetailPage() {
         </Grid>
       </Box>
 
-      {/* (삭제 다이얼로그... 그대로) */}
+      {/* 삭제 다이얼로그 (이전과 동일) */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>상품 삭제</DialogTitle>
         <DialogContent>
@@ -478,3 +502,4 @@ function DetailPage() {
 }
 
 export default DetailPage;
+
