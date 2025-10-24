@@ -17,7 +17,7 @@ import { Search } from '@mui/icons-material';
 import MainPage from './pages/MainPage';
 import DetailPage from './pages/DetailPage';
 import AddPage from './pages/AddPage';
-import EditPage from './pages/EditPage';
+import EditPage from './pages/EditPage';  
 
 export default function App() {
   const [q, setQ] = useState('');
@@ -25,7 +25,7 @@ export default function App() {
   return (
     <Router>
       <CssBaseline />
-
+    
       {/* 🔹 상단 네비게이션 */}
       <AppBar
         position="sticky"

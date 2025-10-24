@@ -14,7 +14,6 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
-  // Container는 이제 사용하지 않습니다.
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -28,6 +27,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { getProduct, deleteProduct } from '../services/api';
 import { CONDITIONS } from '../constants';
 import Header from '../components/Header';
+import ProductMap from '../components/ProductMap'; // 👈 [수정] 지도 컴포넌트 임포트
 
 function DetailPage() {
   const { id } = useParams();
@@ -108,7 +108,8 @@ function DetailPage() {
   const timeAgo = '55분 전';
 
   return (
-    <Box sx={{ minHeight: '10vh', bgcolor: '#cd7676ff' }}>
+    // [수정] 배경색은 UI 확인용이었던 것 같아 주석 처리했습니다.
+    <Box sx={{ minHeight: '10vh' /*, bgcolor: '#cd7676ff'*/ }}>
       <Header />
 
       {/* Container 대신 Box를 사용하고 직접 스타일링 */}
@@ -141,6 +142,7 @@ function DetailPage() {
                     e.target.src = 'https://via.placeholder.com/600x600?text=No+Image';
                   }}
                 />
+                {/* (이미지 네비게이션 버튼 등은 그대로) */}
                 <IconButton
                   sx={{
                     position: 'absolute',
@@ -217,6 +219,7 @@ function DetailPage() {
           {/* 빨간 박스 (상품 정보) */}
           <Grid item xs={12} md={5}>
             <Box>
+              {/* (상품 제목, 가격, 찜하기 등등... 그대로) */}
               <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
                 {product.title}
               </Typography>
@@ -269,6 +272,7 @@ function DetailPage() {
               </Box>
               <Divider sx={{ my: 3 }} />
               <Box sx={{ mb: 4 }}>
+                {/* (상품상태, 램 용량 등등... 그대로) */}
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
                   <Typography
                     variant="body1"
@@ -289,11 +293,7 @@ function DetailPage() {
                   />
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ width: '150px', flexShrink: 0 }}
-                  >
+                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
                     • 램 용량
                   </Typography>
                   <Typography variant="body1" fontWeight="medium">
@@ -301,11 +301,7 @@ function DetailPage() {
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ width: '150px', flexShrink: 0 }}
-                  >
+                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
                     • 저장용량
                   </Typography>
                   <Typography variant="body1" fontWeight="medium">
@@ -313,11 +309,7 @@ function DetailPage() {
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ width: '150px', flexShrink: 0 }}
-                  >
+                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
                     • 배송비
                   </Typography>
                   <Typography variant="body1" fontWeight="medium">
@@ -325,11 +317,7 @@ function DetailPage() {
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ width: '150px', flexShrink: 0 }}
-                  >
+                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
                     • 카테고리
                   </Typography>
                   <Typography variant="body1" fontWeight="medium">
@@ -337,11 +325,7 @@ function DetailPage() {
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ width: '150px', flexShrink: 0 }}
-                  >
+                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
                     • 전공/학과
                   </Typography>
                   <Typography variant="body1" fontWeight="medium">
@@ -361,7 +345,17 @@ function DetailPage() {
                   </Typography>
                 </Box>
               </Box>
+
+              {/* 👇 [수정] 지도 컴포넌트 추가 */}
+              {product.location && (
+                <Box sx={{ my: 3 }}>
+                  <ProductMap locationName={product.location} />
+                </Box>
+              )}
+
               <Divider sx={{ my: 3 }} />
+
+              {/* (번개톡, 바로구매 버튼 등등... 그대로) */}
               <Box sx={{ display: 'flex', gap: 1.5 }}>
                 <Button
                   variant="outlined"
@@ -466,6 +460,7 @@ function DetailPage() {
         </Grid>
       </Box>
 
+      {/* (삭제 다이얼로그... 그대로) */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>상품 삭제</DialogTitle>
         <DialogContent>
@@ -483,4 +478,3 @@ function DetailPage() {
 }
 
 export default DetailPage;
-

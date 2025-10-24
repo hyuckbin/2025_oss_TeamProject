@@ -10,10 +10,9 @@ import {
 } from '@mui/material';
 import ProductCard from '../components/ProductCard';
 
-export default function MainPage() {
+export default function MainPage({ searchQuery }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState('');
   const [sort, setSort] = useState('latest');
   const [open, setOpen] = useState(false);
   const [majSel, setMajSel] = useState(() => new Set());
@@ -30,7 +29,7 @@ export default function MainPage() {
 
   const filtered = useMemo(() => {
     let base = items;
-    if (q) base = base.filter(p => (p.title || '').toLowerCase().includes(q.toLowerCase()));
+    if (searchQuery) base = base.filter(p => (p.title || '').toLowerCase().includes(searchQuery.toLowerCase()));
     if (majSel.size > 0) base = base.filter(p => majSel.has(p.major));
 
     const arr = [...base];
@@ -38,8 +37,7 @@ export default function MainPage() {
     else if (sort === 'priceDesc') arr.sort((a, b) => (b.price || 0) - (a.price || 0));
     else arr.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     return arr;
-  }, [items, q, sort, majSel]);
-
+  }, [items, searchQuery, sort, majSel]);
   const toggleSet = (set, value) => {
     const next = new Set(set);
     next.has(value) ? next.delete(value) : next.add(value);
@@ -59,7 +57,7 @@ export default function MainPage() {
         {/* 왼쪽: 검색 결과 */}
         <Typography variant="subtitle1" sx={{ fontSize: 15 }}>
           <Typography component="span" color="error" fontWeight={700}>
-            {q || '전체'}
+            {}
           </Typography>
           의 검색결과{' '}
           <Typography component="span" fontWeight={500}>
