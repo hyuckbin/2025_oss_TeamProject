@@ -120,7 +120,7 @@ export default function MainPage() {
               fontSize: 13,
             }}
           >
-            전공별 필터
+            필터
           </Button>
         </Stack>
       </Stack>
@@ -142,9 +142,11 @@ export default function MainPage() {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 2,              // 카드 사이 여백
-            justifyItems: 'center', // 가운데 정렬
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', // auto-fit 대신 auto-fill 추천
+            gap: 2,
+            justifyContent: 'flex-start', // ✅ 전체 그리드 왼쪽 정렬
+            justifyItems: 'start',        // ✅ 각 아이템도 왼쪽 정렬
+            alignItems: 'start',
             maxWidth: 1400,
             mx: 'auto',
             px: 2,
@@ -160,6 +162,7 @@ export default function MainPage() {
             </RouterLink>
           ))}
         </Box>
+
       )}
 
 
@@ -204,7 +207,7 @@ export default function MainPage() {
           </FormGroup>
 
           <Divider />
-          
+
           <Button variant="contained" fullWidth onClick={() => setOpen(false)}>
             적용하기
           </Button>
