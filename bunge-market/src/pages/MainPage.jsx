@@ -120,7 +120,7 @@ export default function MainPage() {
               fontSize: 13,
             }}
           >
-            필터
+            카테고리/전공별 필터
           </Button>
         </Stack>
       </Stack>

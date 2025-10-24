@@ -6,7 +6,7 @@ import {
   Typography,
   Button,
   Chip,
-  Grid,
+  Grid, 
   Divider,
   CircularProgress,
   Dialog,
@@ -14,6 +14,9 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
+  Paper,
+  Avatar,
+  Stack, 
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -21,14 +24,14 @@ import ChatIcon from '@mui/icons-material/Chat';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import SearchIcon from '@mui/icons-material/Search';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { getProduct, deleteProduct } from '../services/api';
 import { CONDITIONS } from '../constants';
-import Header from '../components/Header';
+// [삭제] import Header from '../components/Header';
 import ProductMap from '../components/ProductMap';
-import PriceChart from '../components/PriceChart'; // 👈 1. PriceChart 컴포넌트 임포트
+import PriceChart from '../components/PriceChart';
 
 function DetailPage() {
   const { id } = useParams();
@@ -38,8 +41,7 @@ function DetailPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // ... (useEffect, handleDelete, handleFavoriteToggle 함수 등은 모두 동일) ...
-  // 상품 데이터 불러오기
+  // 상품 데이터 불러오기 (동일)
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -53,11 +55,10 @@ function DetailPage() {
         setLoading(false);
       }
     };
-
     fetchProduct();
   }, [id, navigate]);
 
-  // 삭제 처리
+  // 삭제 처리 (동일)
   const handleDelete = async () => {
     try {
       await deleteProduct(id);
@@ -69,17 +70,17 @@ function DetailPage() {
     }
   };
 
-  // 찜하기 토글
+  // 찜하기 토글 (동일)
   const handleFavoriteToggle = () => {
     setIsFavorite(!isFavorite);
   };
 
 
-  // 로딩 중
+  // 로딩 중 UI (동일)
   if (loading) {
     return (
       <Box>
-        <Header />
+        {/* [삭제] <Header /> (App.js에서 전역으로 제공) */}
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
           <CircularProgress sx={{ color: '#4FC3F7' }} />
         </Box>
@@ -87,11 +88,11 @@ function DetailPage() {
     );
   }
 
-  // 상품 없음
+  // 상품 없음 UI (동일)
   if (!product) {
     return (
       <Box>
-        <Header />
+        {/* [삭제] <Header /> (App.js에서 전역으로 제공) */}
         <Box sx={{ textAlign: 'center', py: 10 }}>
           <Typography variant="h5">상품을 찾을 수 없습니다.</Typography>
           <Button onClick={() => navigate('/')} sx={{ mt: 2 }}>
@@ -102,389 +103,256 @@ function DetailPage() {
     );
   }
 
-  // 상태 등급 색상 찾기
+  // 상태 등급 색상 찾기 (동일)
   const conditionColor = CONDITIONS.find(c => c.value === product.condition)?.color || '#757575';
 
-  // Mock 데이터
-  const viewCount = 63;
-  const favoriteCount = 1;
-  const timeAgo = '55분 전';
-
-  // --- 👇 2. 차트 데이터를 가공 ---
-  // product.priceHistory가 [10000, 9500, 9800] 와 같은 배열이라고 가정
-  const priceHistoryData = product.priceHistory || [];
-  const priceLabels = priceHistoryData.map((_, index) => {
-    if (index === 0) return '등록 시';
-    return `${index}회 변경`;
-  });
-  const priceData = priceHistoryData;
-  // --- (가공 끝) ---
-
+  // Mock 데이터 -> 실제 데이터 사용하도록 수정
+  const viewCount = product.viewCount || 0; // API에 viewCount가 있다면 사용
+  const favoriteCount = product.favoriteCount || 0; // API에 favoriteCount가 있다면 사용
+  const timeAgo = product.createdAt ? timeAgoCalc(product.createdAt * 1000) : '방금 전'; // 실제 createdAt 사용
 
   return (
-    <Box sx={{ minHeight: '10vh' }}>
-      <Header />
-      <Box sx={{ maxWidth: '1200px', margin: '0 auto', padding: { xs: 2, md: 4 } }}>
-        <Grid container spacing={4}>
-          
-          {/* 왼쪽 이미지 Grid item (이전과 동일) */}
-          <Grid item xs={12} md={7}>
-            {/* ... (이미지 UI) ... */}
-            <Box sx={{ position: 'relative' }}>
-              <Box sx={{
-                position: 'relative',
-                width: '100%',
-                paddingTop: '100%',
-                bgcolor: '#f5f5f5',
-                borderRadius: 2,
-                overflow: 'hidden'
-              }}>
-                <img
-                  src={product.imageUrl}
-                  alt={product.title}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain'
-                  }}
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/600x600?text=No+Image';
-                  }}
-                />
-                <IconButton
-                  sx={{
-                    position: 'absolute',
-                    left: 16,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    bgcolor: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                    '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' }
-                  }}
-                >
-                  <NavigateBeforeIcon />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    position: 'absolute',
-                    right: 16,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    bgcolor: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                    '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' }
-                  }}
-                >
-                  <NavigateNextIcon />
-                </IconButton>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    right: 16,
-                    bottom: 16,
-                    bgcolor: 'rgba(0,0,0,0.6)',
-                    color: 'white',
-                    borderRadius: 20,
-                    px: 2,
-                    py: 0.5,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.5,
-                    cursor: 'pointer'
-                  }}
-                >
-                  <SearchIcon sx={{ fontSize: 18 }} />
-                  <Typography variant="caption">
-                    확대
-                  </Typography>
-                </Box>
-                <Box sx={{
+    <Box>
+      {/* [삭제] <Header /> (App.js에서 전역으로 제공) */}
+
+      {/* [수정] 메인 콘텐츠 영역 (maxWidth: 800px 유지, 세로 배치) */}
+      <Box sx={{ maxWidth: '800px', margin: '0 auto', padding: { xs: 2, md: 4 } }}>
+
+        {/* --- 상단: 이미지와 핵심 정보 (좌우 분할) --- */}
+        {/* [수정] Stack direction 유지, 내부 구조 변경 */}
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} sx={{ mb: 4 }}>
+
+          {/* 1. 왼쪽: 이미지 영역 (거의 동일) */}
+          <Box sx={{ width: { xs: '100%', md: '50%' }, position: 'relative' }}>
+            <Box sx={{ position: 'relative', width: '100%', paddingTop: '100%', bgcolor: '#f5f5f5', borderRadius: 2, overflow: 'hidden' }}>
+              <img
+                src={product.imageUrl || 'https://via.placeholder.com/600x600?text=No+Image'}
+                alt={product.title}
+                style={{
                   position: 'absolute',
-                  bottom: 16,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  display: 'flex',
-                  gap: 1
-                }}>
-                  {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        bgcolor: index === 0 ? '#fff' : 'rgba(255,255,255,0.5)',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s'
-                      }}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* 오른쪽 상품 정보 Grid item */}
-          <Grid item xs={12} md={5}>
-            <Box>
-              {/* ... (제목, 가격, 통계 등은 동일) ... */}
-              <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ mb: 2 }}>
-                {product.title}
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                sx={{ mb: 3 }}
-              >
-                {product.price?.toLocaleString()}
-                <Typography component="span" variant="h4" sx={{ ml: 0.5 }}>
-                  원
-                </Typography>
-              </Typography>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: 3
-              }}>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <FavoriteBorderIcon sx={{ fontSize: 20, color: '#999' }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {favoriteCount}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <VisibilityIcon sx={{ fontSize: 20, color: '#999' }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {viewCount}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccessTimeIcon sx={{ fontSize: 20, color: '#999' }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {timeAgo}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Button
-                  size="small"
-                  startIcon={<VerifiedIcon sx={{ fontSize: 16 }} />}
-                  sx={{
-                    color: '#999',
-                    fontSize: '13px'
-                  }}
-                >
-                  신고하기
-                </Button>
-              </Box>
-              
-              <Divider sx={{ my: 3 }} />
-
-              {/* ... (상품 정보 테이블은 동일) ... */}
-              <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ width: '150px', flexShrink: 0 }}
-                  >
-                    • 상품상태
-                  </Typography>
-                  <Chip
-                    label={product.condition}
-                    sx={{
-                      bgcolor: conditionColor,
-                      color: 'white',
-                      fontWeight: 'bold',
-                      height: 28,
-                      fontSize: '14px'
-                    }}
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/600x600?text=No+Image';
+                }}
+              />
+              {/* 이미지 슬라이드 인디케이터 (간략화) */}
+              <Box sx={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 1 }}>
+                {[0, 1, 2, 3, 4, 5, 6, 7].map((index) => (
+                  <Box
+                    key={index}
+                    sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: index === 0 ? '#555' : '#ccc', cursor: 'pointer' }}
                   />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
-                    • 램 용량
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    8GB
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
-                    • 저장용량
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    256GB
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
-                    • 배송비
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    일반 4,000원
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
-                    • 카테고리
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {product.category}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>
-                    • 전공/학과
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {product.major}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5 }}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ width: '150px', flexShrink: 0 }}
-                  >
-                    • 직거래지역
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {product.location}
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* 지도 컴포넌트 (이전과 동일) */}
-              {product.location && (
-                <Box sx={{ my: 3 }}>
-                  <ProductMap locationName={product.location} />
-                </Box>
-              )}
-
-              {/* --- 👇 3. 차트 컴포넌트 JSX 추가 --- */}
-              {priceData.length > 0 && (
-                <Box sx={{ my: 3 }}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    최근 시세
-                  </Typography>
-                  <PriceChart labels={priceLabels} prices={priceData} />
-                </Box>
-              )}
-              {/* --- (차트 추가 끝) --- */}
-
-              <Divider sx={{ my: 3 }} />
-
-              {/* ... (버튼 및 수정/삭제 링크 등은 동일) ... */}
-              <Box sx={{ display: 'flex', gap: 1.5 }}>
-                <Button
-                  variant="outlined"
-                  onClick={handleFavoriteToggle}
-                  sx={{
-                    width: '100px',
-                    height: '60px',
-                    borderColor: '#e0e0e0',
-                    bgcolor: '#f5f5f5',
-                    color: '#333',
-                    flexDirection: 'column',
-                    gap: 0.5,
-                    '&:hover': {
-                      borderColor: '#FF6B6B',
-                      bgcolor: '#FFF5F5'
-                    }
-                  }}
-                >
-                  {isFavorite ? (
-                    <FavoriteIcon sx={{ fontSize: 24, color: '#FF6B6B' }} />
-                  ) : (
-                    <FavoriteBorderIcon sx={{ fontSize: 24 }} />
-                  )}
-                  <Typography variant="caption" fontSize="12px">
-                    찜 {favoriteCount}
-                  </Typography>
-                </Button>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  startIcon={<ChatIcon sx={{ fontSize: 20 }} />}
-                  sx={{
-                    height: '60px',
-                    bgcolor: '#FFA500',
-                    fontWeight: 'bold',
-                    fontSize: '17px',
-                    '&:hover': {
-                      bgcolor: '#FF8C00'
-                    }
-                  }}
-                >
-                  번개톡
-                </Button>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    height: '60px',
-                    bgcolor: '#FF3333',
-                    fontWeight: 'bold',
-                    fontSize: '17px',
-                    '&:hover': {
-                      bgcolor: '#E62E2E'
-                    }
-                  }}
-                >
-                  바로구매
-                </Button>
-              </Box>
-              <Box sx={{
-                mt: 2,
-                p: 2,
-                bgcolor: '#E8F4FD',
-                borderRadius: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <VerifiedIcon sx={{ fontSize: 20, color: '#1976D2', mr: 1 }} />
-                <Typography variant="body2" color="#1976D2" fontWeight="medium">
-                  안전결제 수수료 없이 구매하세요
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', gap: 2, mt: 3, justifyContent: 'center' }}>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => navigate(`/edit/${id}`)}
-                  sx={{
-                    color: '#666',
-                    borderColor: '#e0e0e0',
-                    minWidth: '80px'
-                  }}
-                >
-                  수정
-                </Button>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => setDeleteDialogOpen(true)}
-                  sx={{
-                    color: '#f44336',
-                    borderColor: '#f44336',
-                    minWidth: '80px'
-                  }}
-                >
-                  삭제
-                </Button>
+                ))}
               </Box>
             </Box>
-          </Grid>
-        </Grid>
-      </Box>
+             {/* 이미지 좌우 버튼 (선택적) */}
+            <IconButton sx={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', bgcolor: 'rgba(0,0,0,0.3)', color: 'white', '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' } }}>
+              <NavigateBeforeIcon />
+            </IconButton>
+            <IconButton sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', bgcolor: 'rgba(0,0,0,0.3)', color: 'white', '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' } }}>
+              <NavigateNextIcon />
+            </IconButton>
+          </Box>
 
-      {/* 삭제 다이얼로그 (이전과 동일) */}
+          {/* 2. 오른쪽: 상품 정보 및 액션 버튼 */}
+          <Box sx={{ width: { xs: '100%', md: '50%' }, display: 'flex', flexDirection: 'column' }}>
+            {/* 상품 제목 */}
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              {product.title}
+            </Typography>
+            {/* 가격 */}
+            <Typography variant="h4" fontWeight="bold" sx={{ mt: 1, mb: 2 }}>
+              {product.price?.toLocaleString()}
+              <Typography component="span" variant="h5" sx={{ ml: 0.5 }}>원</Typography>
+            </Typography>
+            {/* 통계 (찜, 조회수, 시간) + 신고 */}
+            <Stack direction="row" spacing={2} sx={{ color: 'text.secondary', mb: 2, alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <FavoriteBorderIcon sx={{ fontSize: 18 }} />
+                <Typography variant="body2">{favoriteCount}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <VisibilityIcon sx={{ fontSize: 18 }} />
+                <Typography variant="body2">{viewCount}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <AccessTimeIcon sx={{ fontSize: 18 }} />
+                <Typography variant="body2">{timeAgo}</Typography>
+              </Box>
+              <Box sx={{ flexGrow: 1 }} /> {/* 오른쪽 정렬용 빈 공간 */}
+              <Button size="small" sx={{ color: '#999', fontSize: '12px', minWidth: 'auto', p: 0 }}>신고하기</Button>
+            </Stack>
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* 상품 상태, 배송비 등 */}
+            <Stack spacing={1.5} sx={{ mb: 3 }}>
+              <Stack direction="row">
+                <Typography variant="body2" color="text.secondary" sx={{ width: 80, flexShrink: 0 }}>상품상태</Typography>
+                <Typography variant="body2" fontWeight="medium">{product.condition}</Typography>
+              </Stack>
+              <Stack direction="row">
+                <Typography variant="body2" color="text.secondary" sx={{ width: 80, flexShrink: 0 }}>배송비</Typography>
+                <Typography variant="body2" fontWeight="medium">일반 4,000원</Typography>
+              </Stack>
+            </Stack>
+
+            {/* [수정] 버튼들을 flexGrow 대신 여기에 배치 */}
+            {/* 액션 버튼들 */}
+            <Stack direction="row" spacing={1.5} sx={{ mt: 'auto' }}> {/* mt: 'auto'로 아래로 밀착 */}
+              {/* 찜 버튼 (스타일 수정) */}
+              <Button
+                variant="outlined"
+                onClick={handleFavoriteToggle}
+                sx={{
+                  minWidth: 'auto', // 너비 자동 조절
+                  width: 'auto', // 너비 자동 조절
+                  height: '56px',
+                  borderColor: '#ddd',
+                  bgcolor: '#f0f0f0', // 이미지와 유사한 회색 배경
+                  color: isFavorite ? '#FF6B6B' : '#555', // 아이콘 색상도 같이 변경되도록
+                  display: 'flex',
+                  flexDirection: 'column', // 아이콘과 텍스트 세로 배치
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  lineHeight: 1.2,
+                  px: 1, // 좌우 패딩 줄임
+                  '& .MuiButton-startIcon': { margin: 0 }, // 아이콘 마진 제거
+                  '&:hover': { bgcolor: '#e0e0e0', borderColor: '#ccc' }
+                }}
+              >
+                {isFavorite ? <FavoriteIcon sx={{ mb: 0.5 }} /> : <FavoriteBorderIcon sx={{ mb: 0.5 }} />}
+                <Typography variant="caption" sx={{ fontSize: '11px' }}>찜 {favoriteCount}</Typography>
+              </Button>
+              {/* 번개톡 버튼 (스타일 수정) */}
+              <Button
+                variant="outlined" // [수정]
+                startIcon={<ChatIcon />}
+                sx={{
+                  flex: 1, 
+                  height: '56px',
+                  // bgcolor 삭제
+                  color: '#4FC3F7', // [추가]
+                  borderColor: '#4FC3F7', // [추가]
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' } // [수정]
+                }}
+              >
+                번개톡
+              </Button>
+              {/* 바로구매 버튼 (스타일 수정) */}
+              <Button
+                variant="contained"
+                sx={{
+                  flex: 1, 
+                  height: '56px',
+                  bgcolor: '#4FC3F7', // [수정]
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  '&:hover': { bgcolor: '#29B6F6' } // [수정]
+                }}
+              >
+                바로구매
+              </Button>
+            </Stack>
+            {/* 안전결제 안내 */}
+            <Box sx={{ mt: 2, p: 1.5, bgcolor: '#E8F4FD', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <VerifiedIcon sx={{ fontSize: 18, color: '#1976D2', mr: 1 }} />
+              <Typography variant="body2" color="#1976D2" fontWeight="medium">
+                안전결제 수수료 없이 구매하세요
+              </Typography>
+            </Box>
+          </Box>
+        </Stack>
+
+        {/* --- 하단: 판매자 정보, 상세 정보 등 (이전과 동일) --- */}
+
+        {/* 판매자 정보 */}
+        <Paper variant="outlined" sx={{ my: 4, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar sx={{ mr: 2, bgcolor: '#4FC3F7' }}><StorefrontIcon /></Avatar>
+            <Typography variant="h6" fontWeight="bold">{product.seller || '판매자'}</Typography>
+          </Box>
+          <Button variant="outlined" size="small" sx={{ borderColor: '#ddd', color: '#555' }}>상점 보기</Button>
+        </Paper>
+
+        {/* 상품 설명 */}
+        <Box sx={{ my: 4 }}>
+          <Typography variant="h6" fontWeight="bold" gutterBottom>상품 설명</Typography>
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, color: '#333' }}>
+            {product.description || '상품 설명이 없습니다.'}
+          </Typography>
+        </Box>
+
+        <Divider sx={{ my: 4 }} />
+
+        {/* 상품 정보 (테이블 형태 유지) */}
+        <Box sx={{ my: 4 }}>
+          <Typography variant="h6" fontWeight="bold" gutterBottom>상품 정보</Typography>
+          <Box sx={{ mt: 2 }}>
+            <Box sx={{ display: 'flex', py: 1.5 }}><Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>• 상품상태</Typography><Chip label={product.condition} sx={{ bgcolor: conditionColor, color: 'white', fontWeight: 'bold' }} /></Box>
+            <Box sx={{ display: 'flex', py: 1.5 }}><Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>• 카테고리</Typography><Typography variant="body1" fontWeight="medium">{product.category}</Typography></Box>
+            <Box sx={{ display: 'flex', py: 1.5 }}><Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>• 전공/학과</Typography><Typography variant="body1" fontWeight="medium">{product.major}</Typography></Box>
+            <Box sx={{ display: 'flex', py: 1.5 }}><Typography variant="body1" color="text.secondary" sx={{ width: '150px', flexShrink: 0 }}>• 직거래지역</Typography><Typography variant="body1" fontWeight="medium">{product.location}</Typography></Box>
+          </Box>
+        </Box>
+
+        {/* 지도 컴포넌트 */}
+        {product.location && (
+          <Box sx={{ my: 4 }}>
+            <ProductMap locationName={product.location} />
+          </Box>
+        )}
+
+        {/* 차트 컴포넌트 */}
+        {(product.priceHistory && product.priceHistory.length > 0) && (
+          <Box sx={{ my: 4 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>최근 시세</Typography>
+            <PriceChart
+              labels={product.priceHistory.map((_, i) => i === 0 ? '등록 시' : `${i}회차`)}
+              prices={product.priceHistory}
+            />
+          </Box>
+        )}
+
+        {/* 수정/삭제 버튼 */}
+        <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'center' }}>
+          {/* [수정] '수정' 버튼 -> '번개톡' 스타일 적용 */}
+          <Button 
+            size="small" 
+            variant="outlined" 
+            onClick={() => navigate(`/edit/${id}`)} 
+            sx={{ 
+              color: '#4FC3F7', 
+              borderColor: '#4FC3F7',
+              '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' }
+            }}
+          >
+            수정
+          </Button>
+          {/* [수정] '삭제' 버튼 -> '바로구매' 스타일 적용 */}
+          <Button 
+            size="small" 
+            variant="contained" // [수정] variant 변경
+            onClick={() => setDeleteDialogOpen(true)} 
+            sx={{ 
+              bgcolor: '#4FC3F7',
+              '&:hover': { bgcolor: '#29B6F6' }
+            }}
+          >
+            삭제
+          </Button>
+        </Box>
+
+      </Box> {/* End of maxWidth: 800px Box */}
+
+      {/* 삭제 다이얼로그 (동일) */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>상품 삭제</DialogTitle>
         <DialogContent>
@@ -492,14 +360,27 @@ function DetailPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
-          <Button onClick={handleDelete} color="error" variant="contained">
-            삭제
-          </Button>
+          <Button onClick={handleDelete} color="error" variant="contained">삭제</Button>
         </DialogActions>
       </Dialog>
     </Box>
   );
 }
 
-export default DetailPage;
+// [수정] 시간 계산 함수 이름 변경 (중복 방지)
+function timeAgoCalc(dateParam) {
+  if (!dateParam) return null;
+  const date = typeof dateParam === 'object' ? dateParam : new Date(dateParam);
+  const today = new Date();
+  const seconds = Math.round((today - date) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
 
+  if (seconds < 60) return '방금 전';
+  if (minutes < 60) return `${minutes}분 전`;
+  if (hours < 24) return `${hours}시간 전`;
+  return `${days}일 전`;
+}
+
+export default DetailPage;

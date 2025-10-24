@@ -19,8 +19,7 @@ import {
 
 import { createProduct } from '../services/api';
 import { CATEGORIES, MAJORS, CONDITIONS } from '../constants';
-// Header가 프로젝트 전역 AppBar와 중복되면 제거해도 됩니다.
-import Header from '../components/Header';
+// [삭제] import Header from '../components/Header';
 
 function AddPage() {
   const navigate = useNavigate();
@@ -139,8 +138,7 @@ function AddPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8f9fa' }}>
-      {/* 전역 AppBar를 쓰고 있다면 <Header />는 제거해도 됩니다 */}
-      <Header />
+      {/* [삭제] <Header /> (App.js에서 전역으로 제공) */}
 
       <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
         <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
