@@ -6,7 +6,7 @@ import {
   Typography,
   Button,
   Chip,
-  Grid, // Grid는 이제 레이아웃 용도로 쓰지 않지만, 필요할 수 있어 남겨둡니다.
+  Grid, 
   Divider,
   CircularProgress,
   Dialog,
@@ -16,7 +16,7 @@ import {
   IconButton,
   Paper,
   Avatar,
-  Stack, // [추가] Stack 컴포넌트
+  Stack, 
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -24,13 +24,12 @@ import ChatIcon from '@mui/icons-material/Chat';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-// SearchIcon은 이제 사용하지 않습니다.
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { getProduct, deleteProduct } from '../services/api';
 import { CONDITIONS } from '../constants';
-import Header from '../components/Header';
+// [삭제] import Header from '../components/Header';
 import ProductMap from '../components/ProductMap';
 import PriceChart from '../components/PriceChart';
 
@@ -81,7 +80,7 @@ function DetailPage() {
   if (loading) {
     return (
       <Box>
-        <Header />
+        {/* [삭제] <Header /> (App.js에서 전역으로 제공) */}
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
           <CircularProgress sx={{ color: '#4FC3F7' }} />
         </Box>
@@ -93,7 +92,7 @@ function DetailPage() {
   if (!product) {
     return (
       <Box>
-        <Header />
+        {/* [삭제] <Header /> (App.js에서 전역으로 제공) */}
         <Box sx={{ textAlign: 'center', py: 10 }}>
           <Typography variant="h5">상품을 찾을 수 없습니다.</Typography>
           <Button onClick={() => navigate('/')} sx={{ mt: 2 }}>
@@ -114,7 +113,7 @@ function DetailPage() {
 
   return (
     <Box>
-      <Header />
+      {/* [삭제] <Header /> (App.js에서 전역으로 제공) */}
 
       {/* [수정] 메인 콘텐츠 영역 (maxWidth: 800px 유지, 세로 배치) */}
       <Box sx={{ maxWidth: '800px', margin: '0 auto', padding: { xs: 2, md: 4 } }}>
@@ -360,4 +359,3 @@ function timeAgoCalc(dateParam) {
 }
 
 export default DetailPage;
-

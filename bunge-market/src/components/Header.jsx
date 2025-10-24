@@ -1,5 +1,5 @@
 // src/components/Header.jsx
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // [수정] useState는 menuAnchor 용으로 남겨둡니다.
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -10,7 +10,8 @@ import {
   IconButton,
   Typography,
   Menu,
-  MenuItem
+  MenuItem,
+  Button // [추가]
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -18,20 +19,27 @@ import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
 import ChatIcon from '@mui/icons-material/Chat';
 import logo from '../logo.jpg';
+import useAppStore from '../store/useAppStore'; // [추가] Zustand 임포트
 
 function Header() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  
+  // [수정] Zustand 스토어에서 상태와 함수를 가져옵니다.
+  const { searchQuery, setSearchQuery, user, logout } = useAppStore();
+  
+  // [삭제] searchQuery용 useState는 제거합니다.
+  // const [searchQuery, setSearchQuery] = useState(''); 
+  
   const [menuAnchor, setMenuAnchor] = useState(null);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // 검색 기능은 나중에 메인 페이지에서 구현
-    console.log('검색:', searchQuery);
+    // 검색 실행 (Zustand 상태는 이미 변경됨)
+    console.log('Zustand 검색어:', searchQuery);
   };
 
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery(''); // [수정] Zustand 상태 변경
   };
 
   const handleMenuOpen = (event) => {
@@ -40,6 +48,12 @@ function Header() {
 
   const handleMenuClose = () => {
     setMenuAnchor(null);
+  };
+
+  // [추가] 로그아웃 핸들러
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -61,7 +75,6 @@ function Header() {
               alignItems: 'center', 
               gap: 1,
               cursor: 'pointer',
-              //minWidth: '200px'
             }}
             onClick={() => navigate('/')}
           >
@@ -102,8 +115,8 @@ function Header() {
             <TextField
               fullWidth
               placeholder="검색어를 입력하세요..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery} // [수정] Zustand value
+              onChange={(e) => setSearchQuery(e.target.value)} // [수정] Zustand setter
               size="small"
               sx={{
                 bgcolor: '#f0f8ff',
@@ -148,11 +161,11 @@ function Header() {
             />
           </Box>
 
-          {/* 우측 메뉴 */}
+          {/* [수정] 우측 메뉴 (로그인 상태 연동) */}
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             {/* 판매하기 */}
             <Box
-              onClick={() => navigate('/create')}
+              onClick={() => navigate('/add')} // [수정] /add (App.js 라우트 경로)
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -180,33 +193,63 @@ function Header() {
               <Typography variant="body2">판매하기</Typography>
             </Box>
 
-            {/* 내상점 */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-                cursor: 'pointer',
-                '&:hover': { color: '#4FC3F7' }
-              }}
-            >
-              <PersonIcon />
-              <Typography variant="body2">내상점</Typography>
-            </Box>
+            {/* 로그인 상태별 분기 */}
+            {user ? (
+              <>
+                {/* 내상점 */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    cursor: 'pointer',
+                    '&:hover': { color: '#4FC3F7' }
+                  }}
+                >
+                  <PersonIcon />
+                  <Typography variant="body2">내상점</Typography>
+                </Box>
 
-            {/* 번개톡 */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-                cursor: 'pointer',
-                '&:hover': { color: '#4FC3F7' }
-              }}
-            >
-              <ChatIcon />
-              <Typography variant="body2">번개톡</Typography>
-            </Box>
+                {/* 번개톡 */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    cursor: 'pointer',
+                    '&:hover': { color: '#4FC3F7' }
+                  }}
+                >
+                  <ChatIcon />
+                  <Typography variant="body2">번개톡</Typography>
+                </Box>
+                {/* 로그아웃 버튼 */}
+                <Button 
+                  size="small" 
+                  onClick={handleLogout}
+                  sx={{ color: '#666' }}
+                >
+                  로그아웃
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* 로그인 버튼 */}
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => navigate('/login')}
+                  sx={{
+                    bgcolor: '#4FC3F7',
+                    '&:hover': { bgcolor: '#29B6F6' },
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  로그인
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
 
