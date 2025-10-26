@@ -1,5 +1,4 @@
 import React from 'react';
-// [수정] useNavigate 및 불필요한 MUI 임포트 제거
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import {
   CssBaseline,
@@ -7,17 +6,11 @@ import {
   Box,
 } from '@mui/material';
 
-// 📄 페이지 임포트
 import MainPage from './pages/MainPage';
 import DetailPage from './pages/DetailPage';
 import AddPage from './pages/AddPage';
 import EditPage from './pages/EditPage';
 import LoginPage from './pages/LoginPage';
-
-// [삭제] Zustand 스토어 임포트 (Header.jsx가 담당)
-// [삭제] function Header() { ... } (App.js에 있던 헤더 정의 전체 삭제)
-
-// [추가] components/Header.jsx를 임포트합니다.
 import Header from './components/Header';
 
 
@@ -26,9 +19,9 @@ export default function App() {
   return (
     <Router>
       <CssBaseline />
-      <Header /> {/* [수정] components/Header.jsx가 여기에 렌더링됩니다. */}
+      <Header /> 
 
-      {/* 🔹 본문 */}
+      {/* 본문 */}
       <Container
         maxWidth="lg"
         sx={{

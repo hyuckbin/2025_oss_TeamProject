@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-// MockAPI URL (고혁빈님한테 받아서 여기에 입력하세요!)
+// MockAPI URL 
 const API_BASE_URL = 'https://68db330023ebc87faa323a6c.mockapi.io';
 
 const api = axios.create({

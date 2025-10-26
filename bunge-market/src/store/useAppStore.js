@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-// 1. [수정] 'zustand/middleware'에서 persist와 createJSONStorage를 가져옵니다.
+// 1. 'zustand/middleware'에서 persist와 createJSONStorage를 가져옵니다.
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 const useAppStore = create(
@@ -19,7 +19,7 @@ const useAppStore = create(
     {
       name: 'bunge-market-storage',
       
-      // 2. [수정] storage: localStorage가 아니라,
+      // 2. storage: localStorage가 아니라,
       // createJSONStorage로 감싸줍니다.
       storage: createJSONStorage(() => localStorage), 
       
