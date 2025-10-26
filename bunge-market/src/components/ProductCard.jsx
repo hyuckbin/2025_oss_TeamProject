@@ -2,7 +2,7 @@ import { Card, CardContent, CardMedia, Typography, Stack, Box } from '@mui/mater
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
-// 🕒 몇 분 전 / 몇 시간 전 계산
+// 몇 분 전 / 몇 시간 전 계산
 function timeAgo(timestamp) {
   if (!timestamp) return '방금 전';
   const now = new Date();

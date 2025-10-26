@@ -19,7 +19,7 @@ import {
 
 import { createProduct } from '../services/api';
 import { CATEGORIES, MAJORS, CONDITIONS } from '../constants';
-// [삭제] import Header from '../components/Header';
+
 
 function AddPage() {
   const navigate = useNavigate();
@@ -121,7 +121,7 @@ function AddPage() {
         ...data,
         price: Number(data.price) || 0,
         priceHistory: [Number(data.price) || 0],
-        // 🔥 프로젝트 전체 형식에 맞춰 UNIX seconds 로 저장
+        // 프로젝트 전체 형식에 맞춰 UNIX seconds 로 저장
         createdAt: Math.floor(Date.now() / 1000),
       };
 

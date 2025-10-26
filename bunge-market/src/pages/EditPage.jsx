@@ -20,7 +20,6 @@ import {
 
 import { getProduct, updateProduct } from '../services/api'; // getProduct, updateProduct 임포트
 import { CATEGORIES, MAJORS, CONDITIONS } from '../constants';
-// [삭제] import Header from '../components/Header';
 
 function EditPage() {
   const navigate = useNavigate();

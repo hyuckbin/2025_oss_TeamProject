@@ -29,7 +29,6 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { getProduct, deleteProduct } from '../services/api';
 import { CONDITIONS } from '../constants';
-// [삭제] import Header from '../components/Header';
 import ProductMap from '../components/ProductMap';
 import PriceChart from '../components/PriceChart';
 
@@ -231,17 +230,17 @@ function DetailPage() {
               </Button>
               {/* 번개톡 버튼 (스타일 수정) */}
               <Button
-                variant="outlined" // [수정]
+                variant="outlined" 
                 startIcon={<ChatIcon />}
                 sx={{
                   flex: 1, 
                   height: '56px',
                   // bgcolor 삭제
-                  color: '#4FC3F7', // [추가]
-                  borderColor: '#4FC3F7', // [추가]
+                  color: '#4FC3F7', 
+                  borderColor: '#4FC3F7', 
                   fontSize: '1rem',
                   fontWeight: 'bold',
-                  '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' } // [수정]
+                  '&:hover': { borderColor: '#29B6F6', bgcolor: '#E1F5FE' } 
                 }}
               >
                 번개톡
@@ -252,10 +251,10 @@ function DetailPage() {
                 sx={{
                   flex: 1, 
                   height: '56px',
-                  bgcolor: '#4FC3F7', // [수정]
+                  bgcolor: '#4FC3F7', 
                   fontSize: '1rem',
                   fontWeight: 'bold',
-                  '&:hover': { bgcolor: '#29B6F6' } // [수정]
+                  '&:hover': { bgcolor: '#29B6F6' } 
                 }}
               >
                 바로구매
@@ -323,7 +322,7 @@ function DetailPage() {
 
         {/* 수정/삭제 버튼 */}
         <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'center' }}>
-          {/* [수정] '수정' 버튼 -> '번개톡' 스타일 적용 */}
+          {/* '번개톡' 스타일 적용 */}
           <Button 
             size="small" 
             variant="outlined" 
@@ -336,7 +335,7 @@ function DetailPage() {
           >
             수정
           </Button>
-          {/* [수정] '삭제' 버튼 -> '바로구매' 스타일 적용 */}
+          {/*'바로구매' 스타일 적용 */}
           <Button 
             size="small" 
             variant="contained" // [수정] variant 변경
@@ -352,7 +351,7 @@ function DetailPage() {
 
       </Box> {/* End of maxWidth: 800px Box */}
 
-      {/* 삭제 다이얼로그 (동일) */}
+      {/* 삭제 다이얼로그 */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>상품 삭제</DialogTitle>
         <DialogContent>
@@ -367,7 +366,7 @@ function DetailPage() {
   );
 }
 
-// [수정] 시간 계산 함수 이름 변경 (중복 방지)
+// 시간 계산 함수 이름 변경 (중복 방지)
 function timeAgoCalc(dateParam) {
   if (!dateParam) return null;
   const date = typeof dateParam === 'object' ? dateParam : new Date(dateParam);
